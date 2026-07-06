@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software or its checkpoints, please cite it as below."
+title: "RiemannGen: latent-space molecule generation with atom and fragment backends"
+authors:
+  - name: "XeonChem"
+date-released: 2026-07-05
+url: "https://huggingface.co/XeonChem/riemanngen"
+license: Apache-2.0
