@@ -49,29 +49,129 @@ downloaded automatically on first use — no separate setup step.
 
 ## Usage
 
+Load the model once and reuse it across calls (avoids reloading weights
+every time) — every task function below takes an optional `model=`.
+
 ```python
-from RiemannGen.atom import load_model, optimize
+from RiemannGen.atom import load_model
 
 model = load_model()
-z = model.encode(["CCO", "c1ccccc1"])
-print(model.decode(z))
-
-history = optimize("CC(C)Cc1ccc(cc1)C(C)C(=O)O", property="qed", n_steps=30)
-for h in history:
-    print(h)
 ```
 
-Or from the command line:
+### Generate analogs of a seed molecule (noise-based sampling)
+
+```python
+from RiemannGen.core import canon
+
+seed = canon("CC(C)Cc1ccc(cc1)C(C)C(=O)O")  # ibuprofen
+z0 = model.encode([seed])
+
+# std < ~0.6 barely changes anything; std >= ~1.0 jumps to mostly-unrelated
+# molecules -- there is no smooth "slightly different" middle ground.
+zs = model.model.sample(z0, n=12, std=1.0)
+for smi in model.decode(zs, mode="greedy"):
+    print(canon(smi))
+```
+
+### Property-guided generation (CMA-ES optimization)
+
+```python
+from RiemannGen.atom import optimize
+
+history = optimize(seed, property="qed", n_steps=30, popsize=20, model=model)
+for h in history:  # each entry is a strictly-improving candidate found
+    print(h["generation"], h["score"], h["smiles"])
+print("best:", history[-1])
+```
+
+Bring your own objective instead of the `qed`/`logp` builtins:
+
+```python
+from rdkit import Chem
+from rdkit.Chem import Descriptors
+
+def my_scorer(smiles: str) -> float:
+    m = Chem.MolFromSmiles(smiles)
+    return -abs(Descriptors.MolWt(m) - 300)  # e.g. target MW ~300
+
+history = optimize(seed, scoring_fn=my_scorer, n_steps=30, model=model)
+```
+
+### Interpolate between two molecules
+
+```python
+from RiemannGen.atom import interpolate
+
+results = interpolate("CCO", "c1ccccc1", n_steps=9, mode="sample", model=model)
+for r in results:
+    print(f"t={r['t']:.2f}  top={r['top_smiles']}  confidence={r['top_frac']:.2f}")
+```
+
+`mode="sample"` (not greedy) is what reveals the ambiguous crossing zone
+between the two molecules — see `census` below for why that matters.
+
+### Latent arithmetic
+
+```python
+from RiemannGen.atom import arithmetic
+
+result = arithmetic("CCO", "c1ccccc1", op="+", model=model)
+print(result["top_smiles"], result["top_frac"])
+```
+
+### Complete an incomplete SMILES fragment
+
+```python
+from RiemannGen.atom import extend
+
+for r in extend("CC(C)Cc1ccc(", n_samples=20, temperature=1.2, model=model):
+    print(r["smiles"], r["frac"])
+```
+
+### Compare molecules through a metric head
+
+```python
+from RiemannGen.atom import distance
+
+print(distance("CCO", "CCN", head="tanimoto"))
+```
+
+### Check whether a point is actually trustworthy (confidence census)
+
+```python
+from RiemannGen.atom import census
+
+result = census(n_points=200, n_samples_per_point=100, model=model)
+print(result["state_counts"])  # e.g. {'pure': 190, 'entangled': 10}
+```
+
+### Fragment backend: scaffold growth and local editing
+
+```python
+from RiemannGen.fragment import load_model as load_fragment_model, grow_scaffold, edit_locally
+
+fmodel = load_fragment_model()
+print(grow_scaffold("c1ccccc12", n_samples=10, model=fmodel))       # grow off an anchor
+print(edit_locally("CC(=O)Nc1ccc(", n_samples=10, model=fmodel))    # fix a prefix, regenerate the rest
+```
+
+### Command line
 
 ```bash
 riemanngen encode "CCO"
+riemanngen decode --smiles "CCO"
 riemanngen optimize "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --property qed --steps 30
 riemanngen interpolate "CCO" "c1ccccc1" --steps 5
+riemanngen arithmetic "CCO" "c1ccccc1" --op +
+riemanngen extend "CC(C)Cc1ccc(" --n-samples 20
+riemanngen distance "CCO" "CCN" --head tanimoto
 riemanngen census --n-points 200
-riemanngen grow "c1ccccc12" --n-samples 10   # fragment backend
+riemanngen grow "c1ccccc12" --n-samples 10    # fragment backend
+riemanngen edit "CC(=O)Nc1ccc(" --n-samples 10  # fragment backend
 ```
 
-Run `riemanngen --help` for the full list of subcommands.
+Run `riemanngen --help` (or `riemanngen <command> --help`) for the full
+list of subcommands and options.
 
 ## License
 
