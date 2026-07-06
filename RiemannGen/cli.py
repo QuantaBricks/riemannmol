@@ -115,6 +115,16 @@ def cmd_census(args):
     print(json.dumps(result) if args.json else result)
 
 
+def cmd_generate(args):
+    from .atom import generate
+    results = generate(args.smiles, n_samples=args.n_samples, std=args.std,
+                        min_similarity=args.min_similarity, max_mw=args.max_mw)
+    if args.json:
+        print(json.dumps(results))
+    else:
+        _print_table(results, ["smiles", "similarity", "mw"])
+
+
 def cmd_optimize(args):
     from .atom import optimize
     history = optimize(args.smiles, property=args.property, n_steps=args.steps,
@@ -201,6 +211,15 @@ def main():
     sp.add_argument("--n-points", type=int, default=1000)
     sp.add_argument("--n-samples", type=int, default=100)
     sp.set_defaults(func=cmd_census)
+
+    sp = sub.add_parser("generate", help="[atom] generate analogs of a seed molecule (noise-based sampling)")
+    sp.add_argument("smiles", help="seed molecule")
+    sp.add_argument("--n-samples", type=int, default=20)
+    sp.add_argument("--std", type=float, default=1.0,
+                     help="noise scale; <0.6 barely changes anything, >=1.0 jumps to mostly-unrelated molecules")
+    sp.add_argument("--min-similarity", type=float, default=None)
+    sp.add_argument("--max-mw", type=float, default=None)
+    sp.set_defaults(func=cmd_generate)
 
     sp = sub.add_parser("optimize", help="[atom] property-guided molecule generation (CMA-ES in latent space)")
     sp.add_argument("smiles", help="seed molecule to start the search from")

@@ -28,6 +28,8 @@ downloaded automatically on first use — no separate setup step.
 
 **atom backend** (plain-SMILES latent model):
 - `encode` / `decode` — greedy, beam-search, or sampled decoding.
+- `generate` — analogs of a seed molecule via noise-based latent sampling,
+  deduplicated and ranked by similarity to the seed.
 - `optimize` — property-guided generation: CMA-ES search in latent space,
   decoding and scoring every candidate against a real property function
   (QED by default; bring your own scoring function for anything else).
@@ -61,17 +63,16 @@ model = load_model()
 ### Generate analogs of a seed molecule (noise-based sampling)
 
 ```python
-from RiemannGen.core import canon
-
-seed = canon("CC(C)Cc1ccc(cc1)C(C)C(=O)O")  # ibuprofen
-z0 = model.encode([seed])
+from RiemannGen.atom import generate
 
 # std < ~0.6 barely changes anything; std >= ~1.0 jumps to mostly-unrelated
 # molecules -- there is no smooth "slightly different" middle ground.
-zs = model.model.sample(z0, n=12, std=1.0)
-for smi in model.decode(zs, mode="greedy"):
-    print(canon(smi))
+for r in generate("CC(C)Cc1ccc(cc1)C(C)C(=O)O", n_samples=12, std=1.0, model=model):
+    print(f"{r['similarity']:.3f}  {r['smiles']}")
 ```
+
+`generate` deduplicates, canonicalizes, and ranks by Tanimoto similarity to
+the seed for you; pass `min_similarity=`/`max_mw=` to filter results.
 
 ### Property-guided generation (CMA-ES optimization)
 
@@ -160,6 +161,7 @@ print(edit_locally("CC(=O)Nc1ccc(", n_samples=10, model=fmodel))    # fix a pref
 ```bash
 riemanngen encode "CCO"
 riemanngen decode --smiles "CCO"
+riemanngen generate "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --n-samples 20 --std 1.0
 riemanngen optimize "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --property qed --steps 30
 riemanngen interpolate "CCO" "c1ccccc1" --steps 5
 riemanngen arithmetic "CCO" "c1ccccc1" --op +
