@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software or its checkpoints, please cite it as below."
-title: "RiemannGen: latent-space molecule generation with atom and fragment backends"
+title: "RiemannMol: properties-guided molecule generation with atom and fragment backends"
 authors:
-  - name: "XeonChem"
-date-released: 2026-07-05
-url: "https://huggingface.co/XeonChem/riemanngen"
+  - name: "QuantaBricks"
+date-released: 2026-07-06
+url: "https://github.com/QuantaBricks/RiemannMol"
 license: Apache-2.0

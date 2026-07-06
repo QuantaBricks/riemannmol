@@ -1,4 +1,4 @@
-# RiemannGen
+# RiemannMol
 
 Properties-guided molecule generation, with two latent-space backends —
 and a built-in way to tell which generated molecules are actually
@@ -11,17 +11,17 @@ give them into *some* molecule. But not every point in latent space is
 equally trustworthy: points near real training data decode confidently and
 reproducibly; points far from it are often ambiguous — sampling the same
 point repeatedly can yield several unrelated molecules, or nothing valid at
-all. RiemannGen's `census` command surfaces this directly, so you know
+all. RiemannMol's `census` command surfaces this directly, so you know
 which candidates to actually trust.
 
 ## Install
 
 ```bash
-pip install riemanngen
+pip install riemannmol
 ```
 
 Checkpoints are hosted on the Hugging Face Hub
-([XeonChem/riemanngen](https://huggingface.co/XeonChem/riemanngen)) and
+([QuantaBricks/riemannmol](https://huggingface.co/QuantaBricks/riemannmol)) and
 downloaded automatically on first use — no separate setup step.
 
 ## Features
@@ -55,7 +55,7 @@ Load the model once and reuse it across calls (avoids reloading weights
 every time) — every task function below takes an optional `model=`.
 
 ```python
-from RiemannGen.atom import load_model
+from RiemannMol.atom import load_model
 
 model = load_model()
 ```
@@ -63,7 +63,7 @@ model = load_model()
 ### Generate analogs of a seed molecule (noise-based sampling)
 
 ```python
-from RiemannGen.atom import generate
+from RiemannMol.atom import generate
 
 # std < ~0.6 barely changes anything; std >= ~1.0 jumps to mostly-unrelated
 # molecules -- there is no smooth "slightly different" middle ground.
@@ -77,7 +77,7 @@ the seed for you; pass `min_similarity=`/`max_mw=` to filter results.
 ### Property-guided generation (CMA-ES optimization)
 
 ```python
-from RiemannGen.atom import optimize
+from RiemannMol.atom import optimize
 
 history = optimize(seed, property="qed", n_steps=30, popsize=20, model=model)
 for h in history:  # each entry is a strictly-improving candidate found
@@ -101,7 +101,7 @@ history = optimize(seed, scoring_fn=my_scorer, n_steps=30, model=model)
 ### Interpolate between two molecules
 
 ```python
-from RiemannGen.atom import interpolate
+from RiemannMol.atom import interpolate
 
 results = interpolate("CCO", "c1ccccc1", n_steps=9, mode="sample", model=model)
 for r in results:
@@ -114,7 +114,7 @@ between the two molecules — see `census` below for why that matters.
 ### Latent arithmetic
 
 ```python
-from RiemannGen.atom import arithmetic
+from RiemannMol.atom import arithmetic
 
 result = arithmetic("CCO", "c1ccccc1", op="+", model=model)
 print(result["top_smiles"], result["top_frac"])
@@ -123,7 +123,7 @@ print(result["top_smiles"], result["top_frac"])
 ### Complete an incomplete SMILES fragment
 
 ```python
-from RiemannGen.atom import extend
+from RiemannMol.atom import extend
 
 for r in extend("CC(C)Cc1ccc(", n_samples=20, temperature=1.2, model=model):
     print(r["smiles"], r["frac"])
@@ -132,7 +132,7 @@ for r in extend("CC(C)Cc1ccc(", n_samples=20, temperature=1.2, model=model):
 ### Compare molecules through a metric head
 
 ```python
-from RiemannGen.atom import distance
+from RiemannMol.atom import distance
 
 print(distance("CCO", "CCN", head="tanimoto"))
 ```
@@ -140,7 +140,7 @@ print(distance("CCO", "CCN", head="tanimoto"))
 ### Check whether a point is actually trustworthy (confidence census)
 
 ```python
-from RiemannGen.atom import census
+from RiemannMol.atom import census
 
 result = census(n_points=200, n_samples_per_point=100, model=model)
 print(result["state_counts"])  # e.g. {'pure': 190, 'entangled': 10}
@@ -149,7 +149,7 @@ print(result["state_counts"])  # e.g. {'pure': 190, 'entangled': 10}
 ### Fragment backend: scaffold growth and local editing
 
 ```python
-from RiemannGen.fragment import load_model as load_fragment_model, grow_scaffold, edit_locally
+from RiemannMol.fragment import load_model as load_fragment_model, grow_scaffold, edit_locally
 
 fmodel = load_fragment_model()
 print(grow_scaffold("c1ccccc12", n_samples=10, model=fmodel))       # grow off an anchor
@@ -159,20 +159,20 @@ print(edit_locally("CC(=O)Nc1ccc(", n_samples=10, model=fmodel))    # fix a pref
 ### Command line
 
 ```bash
-riemanngen encode "CCO"
-riemanngen decode --smiles "CCO"
-riemanngen generate "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --n-samples 20 --std 1.0
-riemanngen optimize "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --property qed --steps 30
-riemanngen interpolate "CCO" "c1ccccc1" --steps 5
-riemanngen arithmetic "CCO" "c1ccccc1" --op +
-riemanngen extend "CC(C)Cc1ccc(" --n-samples 20
-riemanngen distance "CCO" "CCN" --head tanimoto
-riemanngen census --n-points 200
-riemanngen grow "c1ccccc12" --n-samples 10    # fragment backend
-riemanngen edit "CC(=O)Nc1ccc(" --n-samples 10  # fragment backend
+riemannmol encode "CCO"
+riemannmol decode --smiles "CCO"
+riemannmol generate "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --n-samples 20 --std 1.0
+riemannmol optimize "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --property qed --steps 30
+riemannmol interpolate "CCO" "c1ccccc1" --steps 5
+riemannmol arithmetic "CCO" "c1ccccc1" --op +
+riemannmol extend "CC(C)Cc1ccc(" --n-samples 20
+riemannmol distance "CCO" "CCN" --head tanimoto
+riemannmol census --n-points 200
+riemannmol grow "c1ccccc12" --n-samples 10    # fragment backend
+riemannmol edit "CC(=O)Nc1ccc(" --n-samples 10  # fragment backend
 ```
 
-Run `riemanngen --help` (or `riemanngen <command> --help`) for the full
+Run `riemannmol --help` (or `riemannmol <command> --help`) for the full
 list of subcommands and options.
 
 ## License

@@ -1,16 +1,16 @@
 """Fallback checkpoint/vocab download from the HuggingFace Hub mirror
-(XeonChem/riemanngen), used when a backend's default local path (which
+(QuantaBricks/riemannmol), used when a backend's default local path (which
 assumes a full checkout of the research repo, with atom/ and fragment/
-sibling directories present) doesn't exist -- e.g. when RiemannGen is
+sibling directories present) doesn't exist -- e.g. when RiemannMol is
 pip-installed standalone, without the rest of the repo."""
 from pathlib import Path
 
-HF_REPO = "XeonChem/riemanngen"
+HF_REPO = "QuantaBricks/riemannmol"
 
 
 def resolve_path(local_path, hf_filename: str) -> str:
     """local_path: a Path that exists only in a full repo checkout.
-    hf_filename: the corresponding path in the XeonChem/riemanngen HF repo
+    hf_filename: the corresponding path in the QuantaBricks/riemannmol HF repo
     (e.g. "atom/final-atom.pt"). Returns a local path either way, downloading
     (and caching, via huggingface_hub's own cache dir) if needed."""
     local_path = Path(local_path)
@@ -22,7 +22,7 @@ def resolve_path(local_path, hf_filename: str) -> str:
     except ImportError:
         raise ImportError(
             f"{local_path} not found, and huggingface_hub is not installed to fetch it "
-            f"from {HF_REPO}. Run `pip install huggingface_hub` (or install RiemannGen "
+            f"from {HF_REPO}. Run `pip install huggingface_hub` (or install RiemannMol "
             f"with the [hf] extra) to enable automatic checkpoint download."
         )
     # Check the HF cache first (no network call) so repeated load_model() calls

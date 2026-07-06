@@ -1,4 +1,4 @@
-"""RiemannGen command-line interface: one entry point for both backends.
+"""RiemannMol command-line interface: one entry point for both backends.
 
 Shared verbs (`encode`, `decode`, `census`) take `--backend atom|fragment`
 (default atom). Backend-specific verbs are only registered for the backend
@@ -154,7 +154,7 @@ def cmd_edit(args):
 
 
 def main():
-    p = argparse.ArgumentParser(prog="riemanngen", description="RiemannGen: molecule latent-space generation and analysis")
+    p = argparse.ArgumentParser(prog="riemannmol", description="RiemannMol: molecule latent-space generation and analysis")
     p.add_argument("--json", action="store_true", help="machine-readable JSON output instead of a table")
     sub = p.add_subparsers(dest="command", required=True)
 
