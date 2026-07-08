@@ -8,7 +8,7 @@ import torch
 
 from ..core import MetricHead, SmilesTokenizer, load_metric_head, sample_decode
 from ..core.hf_download import resolve_path
-from ..core.metric_heads import KNOWN_HEADS
+from ..core.metric_heads import KNOWN_HEADS, resolve_head_path
 from .model import DEFAULT_CHECKPOINT, DEFAULT_VOCAB, load_atom_model
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -55,14 +55,16 @@ class AtomInference:
 
     def attach_head(self, name: str, checkpoint_path: Optional[str] = None) -> None:
         """Registers a MetricHead under `name`. If checkpoint_path is
-        omitted, `name` is resolved through KNOWN_HEADS (repo-relative
-        path); otherwise checkpoint_path is used directly."""
+        omitted, `name` is resolved through KNOWN_HEADS -- a repo-relative
+        path if this is a full checkout, otherwise downloaded from the HF
+        Hub on first use (e.g. a pip install with no repo checkout);
+        otherwise checkpoint_path is used directly."""
         path = checkpoint_path
         if path is None:
             if name not in KNOWN_HEADS:
                 raise ValueError(f"unknown head {name!r}; pass checkpoint_path explicitly, "
                                   f"or use one of {list(KNOWN_HEADS)}")
-            path = str(_REPO_ROOT / KNOWN_HEADS[name])
+            path = resolve_head_path(name, repo_root=_REPO_ROOT)
         self.heads[name] = load_metric_head(path)
 
     def _get_head(self, head: str) -> MetricHead:

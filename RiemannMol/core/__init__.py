@@ -3,7 +3,7 @@ from .base_model import ConditionalGaussianHead, LatentSeqModel, load_trained
 from .decode_utils import sample_decode, beam_search_all_completed, forced_prefix_then_sample
 from .census import classify_state, run_census
 from .canon import canon, render_molecule_grid
-from .metric_heads import MetricHead, load_metric_head, KNOWN_HEADS, resolve_head_path
+from .metric_heads import MetricHead, load_metric_head, KNOWN_HEADS, resolve_head_path, CouplingLayer, CouplingStack
 
 __all__ = [
     "SmilesTokenizer", "SMILES_REGEX",
@@ -12,4 +12,5 @@ __all__ = [
     "classify_state", "run_census",
     "canon", "render_molecule_grid",
     "MetricHead", "load_metric_head", "KNOWN_HEADS", "resolve_head_path",
+    "CouplingLayer", "CouplingStack",
 ]
