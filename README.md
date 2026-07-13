@@ -160,6 +160,7 @@ print(edit_locally("CC(=O)Nc1ccc(", n_samples=10, model=fmodel))    # fix a pref
 
 ```bash
 riemannmol encode "CCO"
+riemannmol encode "CCO" --head tanimoto  # encode through a metric head's encoder instead of the base z
 riemannmol decode --smiles "CCO"
 riemannmol generate "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --n-samples 20 --std 1.0
 riemannmol optimize "CC(C)Cc1ccc(cc1)C(C)C(=O)O" --property qed --steps 30

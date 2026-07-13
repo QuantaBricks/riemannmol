@@ -39,6 +39,17 @@ def _load_backend(name: str):
 
 def cmd_encode(args):
     model = _load_backend(args.backend)
+    if args.head:
+        if args.backend != "atom":
+            print("--head is only supported for --backend atom (metric heads are atom-only)", file=sys.stderr)
+            sys.exit(1)
+        vecs = [model.project(smi, args.head) for smi in args.smiles]
+        if args.json:
+            print(json.dumps([v.tolist() for v in vecs]))
+        else:
+            for smi, v in zip(args.smiles, vecs):
+                print(f"{smi} [{args.head}]: {v.tolist()}")
+        return
     z = model.encode(args.smiles)
     if args.json:
         print(json.dumps([z[i, 0].tolist() for i in range(z.shape[0])]))
@@ -161,6 +172,9 @@ def main():
     sp = sub.add_parser("encode", help="encode one or more SMILES into latent z")
     sp.add_argument("smiles", nargs="+")
     sp.add_argument("--backend", default="atom", choices=["atom", "fragment"])
+    sp.add_argument("--head", default=None,
+                     help="[atom] encode through a metric head's encoder instead of the base z "
+                          "(tanimoto | potency_egfr | <path to a custom head checkpoint>)")
     sp.set_defaults(func=cmd_encode)
 
     sp = sub.add_parser("decode", help="decode a latent z (or round-trip a SMILES) back to molecules")
