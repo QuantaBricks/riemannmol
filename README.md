@@ -1,8 +1,10 @@
-![QuantaBricks](imgs/quantabricks_logo.png)
 
 # RiemannMol
 
 *A [QuantaBricks](https://quantabricks.xyz) product.*
+
+![QuantaBricks](imgs/quantabricks_logo.png)
+
 
 Properties-guided molecule generation, with two latent-space backends —
 and a built-in way to tell which generated molecules are actually
