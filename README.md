@@ -1,7 +1,8 @@
 
 # RiemannMol
 
-![QuantaBricks](imgs/quantabricks_logo.png)
+<img src="imgs/quantabricks_logo.png" alt="QuantaBricks" width="220">
+
 
 *A [QuantaBricks](https://quantabricks.xyz) product.*
 
