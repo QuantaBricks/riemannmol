@@ -1,8 +1,19 @@
 # RiemannMol
 
+*A [QuantaBricks](https://quantabricks.xyz) product.*
+
 Properties-guided molecule generation, with two latent-space backends —
 and a built-in way to tell which generated molecules are actually
 trustworthy, not just plausible-looking.
+
+## Try it on ChemOrchestra
+
+No install needed — RiemannMol runs as a node on
+[ChemOrchestra™](https://www.quantabricks.xyz), QuantaBricks' no-code
+workflow builder. Drop in a "Similarity-based" block, wire a seed SMILES
+into it, and preview the generated analogs live:
+
+Try the example workflow: https://www.quantabricks.xyz/shared/f5636f68-c7dd-4079-b313-57abdaed3e99
 
 ## Why
 
