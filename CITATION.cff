@@ -1,8 +1,35 @@
 cff-version: 1.2.0
 message: "If you use this software or its checkpoints, please cite it as below."
-title: "RiemannMol: properties-guided molecule generation with atom and fragment backends"
+title: "RiemannMol I: Molecular Generation with Learned Latent Metrics"
 authors:
-  - name: "QuantaBricks"
-date-released: 2026-07-06
+  - family-names: "Zhang"
+    given-names: "Xichen"
+    affiliation: "QuantaBricks LLC"
+  - family-names: "Ma"
+    given-names: "Yizhou"
+    affiliation: "QuantaBricks LLC"
+  - family-names: "Chen"
+    given-names: "Xin"
+    affiliation: "QuantaBricks LLC"
+    orcid: "https://orcid.org/0000-0002-5227-1334"
+date-released: 2026-08-17
 url: "https://github.com/QuantaBricks/RiemannMol"
+doi: "10.26434/chemrxiv.15007553/v1"
+preferred-citation:
+  type: article
+  title: "RiemannMol I: Molecular Generation with Learned Latent Metrics"
+  authors:
+    - family-names: "Zhang"
+      given-names: "Xichen"
+      affiliation: "QuantaBricks LLC"
+    - family-names: "Ma"
+      given-names: "Yizhou"
+      affiliation: "QuantaBricks LLC"
+    - family-names: "Chen"
+      given-names: "Xin"
+      affiliation: "QuantaBricks LLC"
+  journal: "ChemRxiv"
+  year: 2026
+  doi: "10.26434/chemrxiv.15007553/v1"
+  url: "https://chemrxiv.org/doi/full/10.26434/chemrxiv.15007553/v1"
 license: Apache-2.0

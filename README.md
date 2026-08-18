@@ -22,6 +22,13 @@ into it, and preview the generated analogs live:
 
 Try the example workflow: https://www.quantabricks.xyz/shared/f5636f68-c7dd-4079-b313-57abdaed3e99
 
+## Enterprise & Custom Deployment
+
+Need on-prem deployment, a custom metric head trained on your own
+property data, or integration support? Contact
+[contact@quanta-bricks.com](mailto:contact@quanta-bricks.com), or join
+our QQ group: **7426158**.
+
 ## Why
 
 Most latent-space molecule generators will happily decode *any* point you
@@ -194,6 +201,22 @@ riemannmol edit "CC(=O)Nc1ccc(" --n-samples 10  # fragment backend
 Run `riemannmol --help` (or `riemannmol <command> --help`) for the full
 list of subcommands and options.
 
+## Citation
+
+If you use RiemannMol or its checkpoints in published work, please cite:
+
+```bibtex
+@article{zhang2026riemannmol,
+  title   = {RiemannMol I: Molecular Generation with Learned Latent Metrics},
+  author  = {Zhang, Xichen and Ma, Yizhou and Chen, Xin},
+  journal = {ChemRxiv},
+  year    = {2026},
+  doi     = {10.26434/chemrxiv.15007553/v1},
+  url     = {https://chemrxiv.org/doi/full/10.26434/chemrxiv.15007553/v1}
+}
+```
+
 ## License
 
-Apache License 2.0.
+Apache License 2.0. Commercial use must credit **QuantaBricks/RiemannMol**
+as the source.
