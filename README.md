@@ -11,6 +11,15 @@ Properties-guided molecule generation, with two latent-space backends —
 and a built-in way to tell which generated molecules are actually
 trustworthy, not just plausible-looking.
 
+## Enterprise & Custom Deployment & Community
+
+Need on-prem deployment, a custom metric head trained on your own
+property data, or integration support? Contact
+[contact@quanta-bricks.com](mailto:contact@quanta-bricks.com).
+
+Join the community: QQ group **7426158**, or
+[Discord](https://discord.gg/BN7WJwqJuk).
+
 ## Try it on ChemOrchestra
 
 No install needed — RiemannMol runs as a node on
@@ -21,23 +30,6 @@ into it, and preview the generated analogs live:
 ![RiemannMol on ChemOrchestra](imgs/chemorchestra_similarity.png)
 
 Try the example workflow: https://www.quantabricks.xyz/shared/f5636f68-c7dd-4079-b313-57abdaed3e99
-
-## Enterprise & Custom Deployment
-
-Need on-prem deployment, a custom metric head trained on your own
-property data, or integration support? Contact
-[contact@quanta-bricks.com](mailto:contact@quanta-bricks.com), or join
-our QQ group: **7426158**.
-
-## Why
-
-Most latent-space molecule generators will happily decode *any* point you
-give them into *some* molecule. But not every point in latent space is
-equally trustworthy: points near real training data decode confidently and
-reproducibly; points far from it are often ambiguous — sampling the same
-point repeatedly can yield several unrelated molecules, or nothing valid at
-all. RiemannMol's `census` command surfaces this directly, so you know
-which candidates to actually trust.
 
 ## Install
 
