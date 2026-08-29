@@ -4,7 +4,7 @@
 <img src="imgs/quantabricks_logo.png" alt="QuantaBricks" width="220">
 
 
-*A [QuantaBricks](https://quantabricks.xyz) product.*
+*A [QuantaBricks](https://www.quantabricks.xyz) product.*
 
 
 Properties-guided molecule generation, with two latent-space backends —
