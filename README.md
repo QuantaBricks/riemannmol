@@ -210,5 +210,5 @@ If you use RiemannMol or its checkpoints in published work, please cite:
 
 ## License
 
-Apache License 2.0. Commercial use must credit **QuantaBricks/RiemannMol**
+Apache License 2.0. Commercial are suggested to credit **QuantaBricks/RiemannMol**
 as the source.
